@@ -37,7 +37,7 @@ public class FileController {
 
 	private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
-	@PostMapping("/cluster")
+	@GetMapping("/cluster")
 	public ResponseEntity<Resource> downloadFile(HttpServletRequest request, @RequestParam(value="latitude", required = false, defaultValue = "8.476682") String latitude,
 			@RequestParam(value="longitude", required = false, defaultValue = "49.483752") String longitude,
 			@RequestParam(value="algorithm", required = false, defaultValue = "simple") String algorithm) {
