@@ -1,7 +1,4 @@
-package com.example.filedemo.controller;
-
-import src.com.web.FrontProcessor;
-import src.com.web.GeoJsonFormatter;
+package src.com.web;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -33,12 +30,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-public class FileController {
+public class WebJsonController {
 
-	private static final Logger logger = LoggerFactory.getLogger(FileController.class);
+	private static final Logger logger = LoggerFactory.getLogger(WebJsonController.class);
 
 	@GetMapping("/cluster")
-	public ResponseEntity<Resource> downloadFile(HttpServletRequest request, @RequestParam(value="longitude", required = false, defaultValue = "8.476682") String longitude,
+	public ResponseEntity<byte[]> downloadFile(HttpServletRequest request, @RequestParam(value="longitude", required = false, defaultValue = "8.476682") String longitude,
 			@RequestParam(value="latitude", required = false, defaultValue = "49.483752") String latitude,
 			@RequestParam(value="algorithm", required = false, defaultValue = "simple") String algorithm) {
 		
@@ -51,26 +48,23 @@ public class FileController {
     	
     	
 		System.out.println("-> Returning results of size "+ ((int) (tmpFile.length()  / 1024)) +"KB ...");
-        java.nio.file.Path path = Paths.get(tmpFile.getAbsolutePath());
+        //java.nio.file.Path path = Paths.get(tmpFile.getAbsolutePath());
         
-        Resource resource = null;
+		String filename = tmpFile.getName();
+        byte[] tmpBytes = "{\"type\": \"FeatureCollection\",\n \"features\": []\n}".getBytes();
 		try {
-			resource = new UrlResource("file://"+tmpFile.getAbsolutePath());
+			tmpBytes = this.bytesFromStream(new FileInputStream(tmpFile));
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			tmpFile.delete();
 		}
 		// Try to determine file's content type
-		String contentType = null;
-		
-
-		// Fallback to the default content type if type could not be determined
-		if (contentType == null) {
-			contentType = "application/octet-stream";
-		}
+		String  contentType = "application/octet-stream";
 
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-				.body(resource);
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+				.body(tmpBytes);
 	}
 
 	public byte[] bytesFromStream(InputStream in) {

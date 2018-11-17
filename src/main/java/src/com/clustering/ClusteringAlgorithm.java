@@ -10,6 +10,7 @@ public abstract class ClusteringAlgorithm implements IClusteringAlgorithm {
 	private ArrayList<Cluster> clusters = new ArrayList<Cluster>();
 	private ArrayList<Instance> instances = new ArrayList<Instance>();
 	
+	@Override
 	public ArrayList<Instance> getInstances() {
 		return instances;
 	}
@@ -18,7 +19,7 @@ public abstract class ClusteringAlgorithm implements IClusteringAlgorithm {
 		this.instances = instances;
 	}
 	
-
+	@Override
 	public ArrayList<Cluster> getClusters() {
 		return clusters;
 	}

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import src.com.clustering.ClassOverlap;
 import src.com.clustering.DBScanClusteringAlgorithm;
+import src.com.clustering.IClusteringAlgorithm;
 import src.com.clustering.SimpleSquareClusteringAlgorithm;
 import src.com.core.Category;
 import src.com.core.Cluster;
@@ -29,13 +30,19 @@ public class FrontProcessor {
 		
 		System.out.println("   #Instances:" + instances.size());
 		
-		SimpleSquareClusteringAlgorithm clusterAlg = new SimpleSquareClusteringAlgorithm();
-		clusterAlg.setClustersize(0.01);
-/*
-		DBScanClusteringAlgorithm clusterAlg = new DBScanClusteringAlgorithm();
-		clusterAlg.setEpsilon(0.01);
-		clusterAlg.setMinPoints(1);
-	*/	
+		
+		IClusteringAlgorithm clusterAlg = null;
+		if (algorithm.equals("dbscan")) {
+			DBScanClusteringAlgorithm cTmp = new DBScanClusteringAlgorithm();
+			cTmp.setEpsilon(0.01);
+			cTmp.setMinPoints(1);
+			clusterAlg = cTmp;
+		} else {
+			SimpleSquareClusteringAlgorithm cTmp = new SimpleSquareClusteringAlgorithm();
+			cTmp.setClustersize(0.01);
+			clusterAlg = cTmp;
+		}
+		
 		System.out.println("-> Building clusters...");
 		clusterAlg.buildCluster(instances);
 		instances = clusterAlg.getInstances();

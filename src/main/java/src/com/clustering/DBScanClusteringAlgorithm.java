@@ -22,6 +22,9 @@ public class DBScanClusteringAlgorithm extends ClusteringAlgorithm {
 	public void buildCluster(ArrayList<Instance> instances) {
 		
 		WekaPreprocessor wp = new WekaPreprocessor();
+		for (Instance instance : instances) {
+			instance.persistLocation();
+		}
 		Instances wInstances = wp.preprocess(instances);
 		
 		weka.clusterers.DBScan dbscan = new weka.clusterers.DBScan();
@@ -50,7 +53,9 @@ public class DBScanClusteringAlgorithm extends ClusteringAlgorithm {
 				clusters.add(c);
 			}
 			
-
+			for (Instance instance : instances) {
+					instance.recoverPersistedLocation();
+			}
 			super.setClusters(clusters);
 			super.setInstances(instances);
 			

@@ -13,6 +13,7 @@ public class Instance {
 	private ArrayList<Category> institutionClasses;
 	private Cluster cluster;
 	private String name;
+	private Location persistentLocation;
 	
 	public Instance() {
 		id = UUID.randomUUID().toString();
@@ -105,6 +106,14 @@ public class Instance {
 	@Override
 	public String toString() {
 		return "" + getName() + " (" + getLatitude() + ", " + getLongitude() + "); " + getCluster().toString() + " @" + getCluster().getCategory().name + " (" + getCluster().getId() + ")" + ";";
+	}
+
+	public void persistLocation() {
+		this.persistentLocation = new Location(this.latitude, this.longitude);
+	}
+	public void recoverPersistedLocation() {
+		this.latitude = this.persistentLocation.latitude;
+		this.longitude = this.persistentLocation.longitude;
 	}
 	
 }

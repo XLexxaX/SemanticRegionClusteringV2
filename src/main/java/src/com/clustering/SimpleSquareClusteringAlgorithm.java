@@ -30,6 +30,7 @@ public class SimpleSquareClusteringAlgorithm extends ClusteringAlgorithm {
 		clusters.add(c);
 
 		for (Instance instance : instances) {
+			
 
 			// Is the current instance located within any existing cluster.
 			// If so, register it to the cluster's instance-list
