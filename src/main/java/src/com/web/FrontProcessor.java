@@ -23,10 +23,10 @@ public class FrontProcessor {
 		
 	}
 	
-	public void process(String latitude, String longitude, String algorithm) {
+	public void process(String latitude, String longitude, String algorithm, String dataorigin) {
 
 		System.out.println("-> Crawling instances...");
-		ArrayList<Instance> instances = new Dataset(latitude, longitude).getDataset();//createDummyInstances();
+		ArrayList<Instance> instances = new Dataset(Double.parseDouble(latitude), Double.parseDouble(longitude), dataorigin).getDataset();//createDummyInstances();
 		
 		System.out.println("   #Instances:" + instances.size());
 		

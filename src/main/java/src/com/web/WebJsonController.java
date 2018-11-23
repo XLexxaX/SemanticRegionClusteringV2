@@ -37,13 +37,14 @@ public class WebJsonController {
 	@GetMapping("/cluster")
 	public ResponseEntity<byte[]> downloadFile(HttpServletRequest request, @RequestParam(value="longitude", required = false, defaultValue = "8.476682") String longitude,
 			@RequestParam(value="latitude", required = false, defaultValue = "49.483752") String latitude,
-			@RequestParam(value="algorithm", required = false, defaultValue = "simple") String algorithm) {
+			@RequestParam(value="algorithm", required = false, defaultValue = "simple") String algorithm,
+			@RequestParam(value="dataorigin", required = false, defaultValue = "lgd") String dataorigin) {
 		
 		System.out.println("Request received for area (" + latitude + ", " + longitude+ ").");
     	
 		
 		FrontProcessor processor = new FrontProcessor();
-    	processor.process(latitude, longitude, algorithm);
+    	processor.process(latitude, longitude, algorithm, dataorigin);
     	File tmpFile = GeoJsonFormatter.format(processor.getInstances(), processor.getClusters());
     	
     	
