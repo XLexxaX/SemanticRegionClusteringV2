@@ -35,37 +35,50 @@ public class WebJsonController {
 	private static final Logger logger = LoggerFactory.getLogger(WebJsonController.class);
 
 	@GetMapping("/cluster")
-	public ResponseEntity<byte[]> downloadFile(HttpServletRequest request, @RequestParam(value="longitude", required = false, defaultValue = "8.476682") String longitude,
-			@RequestParam(value="latitude", required = false, defaultValue = "49.483752") String latitude,
-			@RequestParam(value="algorithm", required = false, defaultValue = "simple") String algorithm,
-			@RequestParam(value="dataorigin", required = false, defaultValue = "lgd") String dataorigin) {
+	public ResponseEntity<byte[]> downloadFile(HttpServletRequest request,
+			@RequestParam(value = "longitude", required = false, defaultValue = "8.476682") String longitude,
+			@RequestParam(value = "latitude", required = false, defaultValue = "49.483752") String latitude,
+			@RequestParam(value = "algorithm", required = false, defaultValue = "simple") String algorithm,
+			@RequestParam(value = "dataorigin", required = false, defaultValue = "lgd") String dataorigin) {
+
+		System.out.println("Request received for area (" + latitude + ", " + longitude + ").");
 		
-		System.out.println("Request received for area (" + latitude + ", " + longitude+ ").");
-    	
-		
-		FrontProcessor processor = new FrontProcessor();
-    	processor.process(latitude, longitude, algorithm, dataorigin);
-    	File tmpFile = GeoJsonFormatter.format(processor.getInstances(), processor.getClusters());
-    	
-    	
-		System.out.println("-> Returning results of size "+ ((int) (tmpFile.length()  / 1024)) +"KB ...");
-        //java.nio.file.Path path = Paths.get(tmpFile.getAbsolutePath());
-        
-		String filename = tmpFile.getName();
-        byte[] tmpBytes = "{\"type\": \"FeatureCollection\",\n \"features\": []\n}".getBytes();
+		String filename = UUID.randomUUID().toString();
+		byte[] tmpBytes = "{\"type\": \"FeatureCollection\",\n \"features\": []\n}".getBytes();
+
 		try {
-			tmpBytes = this.bytesFromStream(new FileInputStream(tmpFile));
+			if (Double.parseDouble(latitude) > 90d || Double.parseDouble(latitude) < -90d) {
+				throw new FaultyParametersException();
+			}
+			if (Double.parseDouble(longitude) > 180d || Double.parseDouble(longitude) < -180d) {
+				throw new FaultyParametersException();
+			}
+			
+			FrontProcessor processor = new FrontProcessor();
+			processor.process(latitude, longitude, algorithm, dataorigin);
+			File tmpFile = GeoJsonFormatter.format(processor.getInstances(), processor.getClusters());
+
+			System.out.println("-> Returning results of size " + ((int) (tmpFile.length() / 1024)) + "KB ...");
+			// java.nio.file.Path path = Paths.get(tmpFile.getAbsolutePath());
+
+			filename = tmpFile.getName();
+			try {
+				tmpBytes = this.bytesFromStream(new FileInputStream(tmpFile));
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				tmpFile.delete();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			tmpFile.delete();
 		}
+
 		// Try to determine file's content type
-		String  contentType = "application/octet-stream";
+		String contentType = "application/octet-stream";
 
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
-				.body(tmpBytes);
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"").body(tmpBytes);
+
 	}
 
 	public byte[] bytesFromStream(InputStream in) {
