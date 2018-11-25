@@ -34,6 +34,7 @@ public class WebJsonController {
 
 	private static final Logger logger = LoggerFactory.getLogger(WebJsonController.class);
 
+	@CrossOrigin
 	@GetMapping("/cluster")
 	public ResponseEntity<byte[]> downloadFile(HttpServletRequest request,
 			@RequestParam(value = "longitude", required = false, defaultValue = "8.476682") String longitude,
