@@ -46,7 +46,7 @@ public class Dataset {
 				+ "||?type = lgdo:Restaurant || ?type = lgdo:University || ?type = lgdo:Museum || ?type = lgdo:School || ?type = lgdo:Bar || ?type = lgdo:Cinema || ?type = lgdo:Theater || ?type = lgdo:Bakery || ?type = lgdo:Hospital || ?type = lgdo:Church ) .}";
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(service, sparqlQuery);
 		ResultSet results = qexec.execSelect();
-		qexec.setTimeout(20, TimeUnit.SECONDS);
+		qexec.setTimeout(120, TimeUnit.SECONDS);
 		ArrayList<Instance> instances = new ArrayList<Instance>();
 		String type;
 		String rememberType = "defaultCategoryName";
